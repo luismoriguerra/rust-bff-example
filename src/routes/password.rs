@@ -4,7 +4,7 @@ use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 use serde_email::Email;
 
-use crate::utils::ApiError;
+use crate::{models::auth0::Auth0User, services::auth0::find_user_by_email, utils::ApiError};
 
 #[derive(Deserialize)]
 pub struct PasswordLinkRequest {
@@ -16,12 +16,10 @@ pub struct PasswordLinkResponse {
 }
 
 pub async fn generate_password_link(
-    // Json(payload): Json<PasswordLinkRequest>,
     WithRejection(Json(payload), _): WithRejection<Json<PasswordLinkRequest>, ApiError>,
-) -> (StatusCode, Json<PasswordLinkResponse>) {
-    let token = PasswordLinkResponse {
-        token: payload.email.to_string(),
-    };
+) -> (StatusCode, Json<Vec<Auth0User>>) {
+    let email = payload.email.to_string();
+    let users = find_user_by_email(&email).await.unwrap();
 
-    (StatusCode::CREATED, Json(token))
+    (StatusCode::CREATED, Json(users))
 }

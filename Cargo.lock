@@ -1696,6 +1696,8 @@ dependencies = [
  "axum-extra",
  "chrono",
  "dotenv",
+ "lazy_static",
+ "once_cell",
  "reqwest",
  "sea-orm",
  "serde",
